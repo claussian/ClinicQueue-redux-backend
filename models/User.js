@@ -8,7 +8,10 @@ const Schema = Mongoose.Schema;
 const userSchema = new Mongoose.Schema({
   username: { type: String, unique: true},
   email: { type: String, unique: true},
-  password: String
+  password: String,
+  vote: Number,
+  subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
+  queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
 }, { timestamps: true });
 
 /**

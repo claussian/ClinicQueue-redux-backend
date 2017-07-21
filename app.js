@@ -10,6 +10,7 @@ import passport from 'passport';
 import multer from 'multer';
 const upload = multer({ dest: './uploads/' });
 import cloudinary from 'cloudinary';
+import passportSocketIo from "passport.socketio";
 
 // Configure .env path
 dotenv.load({path: '.env'});
@@ -38,6 +39,10 @@ mongoose.connection.on('error', (err) => {
   process.exit();
 });
 const app = express();
+
+const server = require('http').Server(app);
+export const io = require('socket.io')(server);
+
 const debug = Debug('clinic-queue-redux-backend:app');
 
 /**
@@ -61,18 +66,37 @@ app.use(cookieParser());
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* Why do we need this ? To connect mongodb by session? */
-const MongoStore = require('connect-mongo')(session);
-app.use(session({
+const sessionStore = new MongoStore({
+  url: 'mongodb://localhost/clinicdb',
+  autoReconnect: true,
+  clear_interval: 3600
+});
+
+const Session = session({
   resave: true,
   saveUninitialized: true,
-  secret: "WDI Singapore",
-  store: new MongoStore({
-    url: 'mongodb://localhost/bookdb',
-    autoReconnect: true,
-    clear_interval: 3600
-  })
+  secret: "WDI-Singapore",
+  store: sessionStore,
+  cookieParser: cookieParser
+});
+
+app.use(Session);
+
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,       // the same middleware you registrer in express
+  key:          'connect.sid',       // the name of the cookie where express/connect stores its session_id
+  secret:       "WDI-Singapore",    // the session_secret to parse the cookie
+  store:        sessionStore,
+  // success:      onAuthorizeSuccess,  // *optional* callback on success
+  // fail:         onAuthorizeFail,     // *optional* callback on fail/error
 }));
+
+// /*
+// * Socket.io
+// */
+// const socketIO = require('./routes/websockets')(io);
+
+
 
 /* Make passport available to app. Passport will update user session with user info on authentication */
 app.use(passport.initialize());

@@ -7,6 +7,19 @@ const upload = multer({ dest: './uploads/' });
 
 const router = express.Router();
 
+/*
+* Proposed function for real time update of Queue from scripy
+*/
+// setTimeOut(()=>{
+//   axios.get('/clinic/')
+//   .then((response) => {
+//     socket.emit('get clinic every 6 minutes', response.data);
+//   })
+//   .catch((error)=> {
+//     console.log(error);
+//   })
+// })
+
 /* GET index page */
 router.get('/', clinicsController.index);
 
