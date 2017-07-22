@@ -3,13 +3,16 @@ import User from '../models/User';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 
-exports.getAllQueue = (req, res) => {
-  Queue.find({}, (err, queue) => {
-    res.json(queue);
+
+// Controller accepts callback 'cb' as an argument
+// Cb will only exceute on completion of async database operation 'Queue.find()'
+exports.getAllQueue = (data,cb) => {
+  Queue.find({}, (err, queues) => {
+      cb(queues);
   })
 }
 
-exports.postQueue = (req, res) => {
+exports.postQueue = (req, cb) => {
   cloudinary.uploader.upload(req.file.path, (result) => {
     const newQueue = new Queue({
       comments: req.body.comments || "",
@@ -21,8 +24,8 @@ exports.postQueue = (req, res) => {
 
     newQueue.save((err) => {
       if(err){console.log(err); return;}
-      res.json(newQueue);
-    }
+      cb(newQueue);
+    })
 
     Clinic.findOne({"_id": req.params.clinic_id}, (err,clinic) => {
       clinic.properties.queue.push(newQueue._id)
@@ -49,8 +52,13 @@ exports.postQueue = (req, res) => {
   );
 }
 
-exports.deleteQueue = (req, res) => {
-  Queue.findOneAndRemove({'_id':req.params.queueid}, (err,queue) => {
+//data is ?? possible suggestion ->
+// {
+//   queue_id,
+//   clinic_id,
+// }
+exports.deleteQueue = (data, cb) => {
+  Queue.findOneAndRemove({'_id': data}, (err,queue) => {
 
   Clinic.findOneAndUpdate({'_id':queue.clinic}, {
     '$pull':{'queue': req.params.id}
@@ -65,6 +73,6 @@ exports.deleteQueue = (req, res) => {
   })
 
   if(err){console.log(err); return;}
-  res.json(review);
+  cb(queue)
 })
 }

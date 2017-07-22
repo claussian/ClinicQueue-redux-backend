@@ -7,7 +7,7 @@ const clinicSchema = new mongoose.Schema({
       coordinates : {
           type : [Number],
           index : '2dsphere',
-          required : true
+          // required : true
       }
   },
   properties : {
