@@ -24,7 +24,7 @@ exports.postClinic = (req,res) => {
     properties: {
       name: req.body.name
     }
-  })
+  });
 
   newClinic.save((err) => {
     if(err){console.log(err); return;}
