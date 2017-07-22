@@ -75,7 +75,7 @@ router.get('/logout',(req, res, next) => {
 });
 
 /*  clear shared books */
-router.delete('/user/clearBooks', userController.removeUserSharedBooks);
+// router.delete('/user/clearBooks', userController.removeUserSharedBooks);
 
 export default router;
 
