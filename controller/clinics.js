@@ -7,11 +7,14 @@ var cloudinary = require('cloudinary');
 /********************************/
 
 exports.getAllClinic = (cb) => {
-  Clinic.find({}).populate('queue').populate('subscribe').exec( (err,clinic) => {
+  // .populate('queue').populate('subscribe').exec(
+  Clinic.find({}).populate('queue').exec( (err,clinic) => {
+    // console.log(clinic)
     cb(clinic);
   })
 }
 
+//for testing purposes only (with postman)
 exports.getClinic = (req,res) => {
   Clinic.find({}, (err, clinic) => {
     res.json(clinic);
@@ -21,6 +24,9 @@ exports.getClinic = (req,res) => {
 exports.postClinic = (req,res) => {
   const newClinic = new Clinic({
     type: req.body.type,
+    geometry: {
+      coordinates: req.body.coordinates,
+    },
     properties: {
       name: req.body.name
     }

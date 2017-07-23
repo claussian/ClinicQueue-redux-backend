@@ -31,5 +31,11 @@ io.on('connection', (socket) => {
     })
   })
 
+  socket.on('latestQueueForAllUser', (queue) => {
+    console.log("websocket receives new queue, sending to others", queue);
+    socket.broadcast.emit('queueForAllUser', queue);
+  })
+
+
 })
 }
