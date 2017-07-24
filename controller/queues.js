@@ -1,4 +1,5 @@
 import Queue from '../models/Queue';
+import Clinic from '../models/Clinic';
 import User from '../models/User';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
@@ -12,33 +13,37 @@ exports.getAllQueue = (data,cb) => {
   })
 }
 
-exports.postQueue = (req, cb) => {
+exports.postQueue = (req, res) => {
+  // console.log("controller reached")
   cloudinary.uploader.upload(req.file.path, (result) => {
-    const newQueue = new Queue({
-      comments: req.body.comments || "",
-      user: req.body.user_id || "",
-      clinic: req.body.clinic_id || "",
+    let newQueue = new Queue({
       pic: result.secure_url || "",
       picPublicId: result.public_id || "",
-    })
+      comment: req.body.comment || "",
+      // user: req.body.user_id || "",
+      clinic: req.body.clinic_id || ""
+    });
 
+    // console.log(newQueue)
     newQueue.save((err) => {
       if(err){console.log(err); return;}
-      cb(newQueue);
-    })
+      res.json(newQueue);
+    });
 
-    Clinic.findOne({"_id": req.params.clinic_id}, (err,clinic) => {
-      clinic.properties.queue.push(newQueue._id)
+
+    Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
+      // console.log(clinic)
+      clinic.queue.push(newQueue._id)
       clinic.save((err)=>{
         if(err){console.log(err); return;}
       });
     })
-    User.findOne({"_id": req.body.user_id}, (err,user) => {
-      user.queue.push(newQueue._id)
-      user.save((err)=>{
-        if(err){console.log(err); return;}
-      });
-    })
+    // User.findOne({"_id": req.body.user_id}, (err,user) => {
+    //   user.queue.push(newQueue._id)
+    //   user.save((err)=>{
+    //     if(err){console.log(err); return;}
+    //   });
+    // })
 
   })
   .then(
@@ -56,23 +61,33 @@ exports.postQueue = (req, cb) => {
 // {
 //   queue_id,
 //   clinic_id,
+//   user_id
 // }
+/* Deleting photos in cloudinary
+function destroy(public_id, options, callback)
+cloudinary.v2.uploader.destroy('zombie', function(error, result){console.log(result)});
+*/
+
 exports.deleteQueue = (data, cb) => {
   Queue.findOneAndRemove({'_id': data}, (err,queue) => {
 
-  Clinic.findOneAndUpdate({'_id':queue.clinic}, {
-    '$pull':{'queue': req.params.id}
-  },(err, restraurant) => {
-    if(err){console.log(err); return;}
-  })
+    Clinic.findOneAndUpdate({'_id': queue.clinic}, {
+      '$pull':{'queue': queue._id}
+    },(err, restraurant) => {
+      if(err){console.log(err); return;}
+    })
 
-  User.findOneAndUpdate({'_id':queue.user},{
-    '$pull':{'reviews': req.params.id}
-  },(err, user) => {
-    if(err){console.log(err); return;}
-  })
+    User.findOneAndUpdate({'_id': queue.user}, {
+      '$pull':{'queue': queue._id}
+    },(err, user) => {
+      if(err){console.log(err); return;}
+    })
 
-  if(err){console.log(err); return;}
-  cb(queue)
-})
+    cloudinary.uploader.destroy(queue.picPublicId, (err, result) => {
+      console.log(result);
+    })
+
+    if(err){console.log(err); return;}
+    cb(queue)
+  })
 }
