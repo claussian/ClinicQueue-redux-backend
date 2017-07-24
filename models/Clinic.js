@@ -11,20 +11,32 @@ const clinicSchema = new mongoose.Schema({
       }
   },
   properties : {
+      type: String,
       name : String,
       name_full: String,
+      ADDRESSFLOORNUMBER: String,
+      LICENCE_TYPE: String,
+      ADDRESSBUILDINGNAME: String,
+      Telephone: String,
+      ADDRESSPOSTALCODE: String,
+      ADDRESSBLOCKHOUSENUMBER: String,
+      ADDRESSUNITNUMBER: String,
+      DESCRIPTION: String,
+      ADDRESSSTREETNAME: String,
       time_created: Date,
       cluster : String,
-      queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
       upvote: Number,
       downvote: Number,
+      cluster : String,
+      time_created: Date,
       queueQty : String,
       waitTime : String,
       currentQueue: [],
       historicalQueue: [],
-      differenceQueue: [],
-      subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
-  }
+      differenceQueue: String
+  },
+  queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
+  subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
 },{
     timestamps: true
   });
