@@ -18,10 +18,17 @@ dotenv.load({path: '.env'});
 
 // configure cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET
+  cloud_name: "dxmdjcspm",
+  api_key: 326963819454321,
+  api_secret: "7A0-lZzv7kBuQnpBrs5vlnKAk7s"
 });
+
+// // configure cloudinary
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_NAME,
+//   api_key: process.env.CLOUDINARY_KEY,
+//   api_secret: process.env.CLOUDINARY_SECRET
+// });
 
 // import favicon from 'serve-favicon';
 import path from 'path';
