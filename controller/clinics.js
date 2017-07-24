@@ -9,7 +9,7 @@ var cloudinary = require('cloudinary');
 exports.getAllClinic = (cb) => {
   // .populate('queue').populate('subscribe').exec(
   Clinic.find({}, (err,clinic) => {
-    console.log(clinic)
+    // console.log(clinic)
     cb(clinic);
   })
 }
