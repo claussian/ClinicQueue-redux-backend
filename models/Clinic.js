@@ -11,7 +11,7 @@ const clinicSchema = new mongoose.Schema({
       }
   },
   properties : {
-      type: String,
+      type: {"type": String},
       name : String,
       name_full: String,
       ADDRESSFLOORNUMBER: String,
