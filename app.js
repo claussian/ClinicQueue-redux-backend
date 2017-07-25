@@ -30,6 +30,7 @@ cloudinary.config({
 //   api_secret: process.env.CLOUDINARY_SECRET
 // });
 
+
 // import favicon from 'serve-favicon';
 import path from 'path';
 import lessMiddleware from 'less-middleware';
@@ -41,7 +42,7 @@ import index from './routes/index';
 import queueRoutes from './routes/queueRoutes';
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/clinicdb');
+mongoose.connect(process.env.REMOTEDB_URI);
 mongoose.connection.on('error', (err) => {
   console.error(err);
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
