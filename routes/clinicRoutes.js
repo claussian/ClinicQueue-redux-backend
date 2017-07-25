@@ -8,6 +8,6 @@ const upload = multer({ dest: './uploads/' });
 const router = express.Router();
 
 router.get('/',clinicController.getClinic);
-router.post('/post', clinicController.postClinic);
+router.post('/', clinicController.postClinic);
 
 module.exports = router;
