@@ -20,7 +20,7 @@ exports.postQueue = (req, res) => {
       pic: result.secure_url || "",
       picPublicId: result.public_id || "",
       comment: req.body.comment || "",
-      // user: req.body.user_id || "",
+      user: req.body.user_id || "",
       clinic: req.body.clinic_id || ""
     });
 
@@ -38,12 +38,12 @@ exports.postQueue = (req, res) => {
         if(err){console.log(err); return;}
       });
     })
-    // User.findOne({"_id": req.body.user_id}, (err,user) => {
-    //   user.queue.push(newQueue._id)
-    //   user.save((err)=>{
-    //     if(err){console.log(err); return;}
-    //   });
-    // })
+    User.findOne({"_id": req.body.user_id}, (err,user) => {
+      user.queue.push(newQueue._id)
+      user.save((err)=>{
+        if(err){console.log(err); return;}
+      });
+    })
 
   })
   .then(

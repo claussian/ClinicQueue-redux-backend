@@ -21,7 +21,7 @@ const queueSchema = new mongoose.Schema({
   pic: String,
     picPublicId: String,
     comment: String,
-    // user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic' },
 },{
     timestamps: true
