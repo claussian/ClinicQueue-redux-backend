@@ -21,6 +21,7 @@ const queueSchema = new mongoose.Schema({
   pic: String,
     picPublicId: String,
     comment: String,
+    status: String,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic' },
 },{
