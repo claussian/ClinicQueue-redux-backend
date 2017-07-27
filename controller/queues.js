@@ -40,7 +40,7 @@ exports.postQueue = (req, res) => {
         if(err){console.log(err); return;}
       });
 
-      if(req.body.status){
+      if(req.body.status!===""){
         Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
 
           subscribes.forEach((subscribe,index) => {
