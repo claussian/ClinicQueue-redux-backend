@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true},
   password: String,
   vote: Number,
+  role: String,
+  clinic: {type: mongoose.Schema.Types.ObjectId, ref: 'Clinic'},
   subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
   queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
 }, { timestamps: true });
