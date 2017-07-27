@@ -19,9 +19,11 @@ exports.postQueue = (req, res) => {
     let newQueue = new Queue({
       pic: result.secure_url || "",
       picPublicId: result.public_id || "",
+      status: req.body.status || "",
       comment: req.body.comment || "",
       user: req.body.user_id || "",
-      clinic: req.body.clinic_id || ""
+      clinic: req.body.clinic_id || "",
+      status: req.body.status || "",
     });
 
     // console.log(newQueue)
@@ -37,13 +39,31 @@ exports.postQueue = (req, res) => {
       clinic.save((err)=>{
         if(err){console.log(err); return;}
       });
+
+      if(req.body.status){
+        Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
+
+          subscribes.forEach((subscribe,index) => {
+            console.log('twillo will send to user contact: '+ subscribe.user.contact);
+            console.log('for clinic: ' + clinic.properties.name_full);
+            console.log('sending clinic status' + req.body.status);
+            /*
+            * To put twillo codes in here
+            */
+          })
+
+        })
+      }
+
     })
+
     User.findOne({"_id": req.body.user_id}, (err,user) => {
       user.queue.push(newQueue._id)
       user.save((err)=>{
         if(err){console.log(err); return;}
       });
     })
+
 
   })
   .then(
