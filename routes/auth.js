@@ -18,10 +18,11 @@ router.post('/signup', function(req, res, next) {
       console.log("Data: ",req.body.email, req.body.username, req.body.password, req.body.contact)
 
       if (existingUser) {
+          console.log("Found existing user!")
           return res.json({'error':'login','message': 'This username/email already exists!'});
       }
 
-      console.log("New user");
+      console.log("New user:");
 
       let user = new User();
       user.username = req.body.username;
@@ -34,7 +35,7 @@ router.post('/signup', function(req, res, next) {
       user.save((err) => {
         console.log("saving user...")
         if (err) {
-          console.log("User save error");
+          console.log("User save error"+err);
           return res.json({'error':'database','message': err});
         }
         req.logIn(user, (err) => {
