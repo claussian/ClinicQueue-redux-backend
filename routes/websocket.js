@@ -1,6 +1,7 @@
 import users from '../controller/users';
 import clinicController from '../controller/clinics';
 import queueController from '../controller/queues';
+import subscribeController from '../controller/subscribes';
 
 /***********FROM JENS****************/
 // io     -- Use that broadcast to all connected user
@@ -34,6 +35,12 @@ io.on('connection', (socket) => {
   socket.on('latestQueueForAllUser', (queue) => {
     console.log("websocket receives new queue, sending to others", queue);
     socket.broadcast.emit('queueForAllUser', queue);
+  })
+
+  socket.on('new subscribe to back end', (newSubscribe) => {
+    subscribeController.postNewSubscribe(newSubscribe, (subscribeSaved) => {
+      socket.emit('subscription successful', subscribeSaved)
+    })
   })
 
 
