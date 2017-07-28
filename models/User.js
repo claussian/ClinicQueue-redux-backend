@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   contact: String,
   vote: Number,
   role: String,
-  myClinic: {type: mongoose.Schema.Types.ObjectId, ref: 'Clinic'},
+  myClinic: String,
   subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
   queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
 }, { timestamps: true });
