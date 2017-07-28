@@ -7,7 +7,10 @@ const router = express.Router();
 
 /* Verify user credentials */
 router.get('/user', (req, res, next) => {
-  res.json(req.user);
+  User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
+  if(err){console.log(err); return;}
+  res.json(user);
+})
 });
 
 /* Signup new user */
@@ -18,10 +21,11 @@ router.post('/signup', function(req, res, next) {
       console.log("Data: ",req.body.email, req.body.username, req.body.password, req.body.contact)
 
       if (existingUser) {
+          console.log("Found existing user!")
           return res.json({'error':'login','message': 'This username/email already exists!'});
       }
 
-      console.log("New user");
+      console.log("New user:");
 
       let user = new User();
       user.username = req.body.username;
@@ -34,7 +38,7 @@ router.post('/signup', function(req, res, next) {
       user.save((err) => {
         console.log("saving user...")
         if (err) {
-          console.log("User save error");
+          console.log("User save error"+err);
           return res.json({'error':'database','message': err});
         }
         req.logIn(user, (err) => {
