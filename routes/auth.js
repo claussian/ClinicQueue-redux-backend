@@ -33,6 +33,7 @@ router.post('/signup', function(req, res, next) {
       user.password = req.body.password;
       user.contact = req.body.contact;
       user.role = req.body.role || "";
+      //if(user.myClinic)
       user.myClinic = req.body.myClinic || "";
       console.log(user);
       user.save((err) => {
