@@ -7,10 +7,14 @@ const router = express.Router();
 
 /* Verify user credentials */
 router.get('/user', (req, res, next) => {
-  User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
-  if(err){console.log(err); return;}
-  res.json(user);
-})
+  if(!req.user){
+    res.json(req.user);
+  }else{
+    User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
+      if(err){console.log(err); return;}
+      res.json(user);
+    })
+  }
 });
 
 /* Signup new user */
