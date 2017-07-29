@@ -36,7 +36,8 @@ exports.postQueue = (req, res) => {
 
     Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
       // console.log(clinic)
-      clinic.queue.push(newQueue._id)
+      // ensure that latest queue is the first in the array
+      clinic.queue.unshift(newQueue._id)
       clinic.save((err)=>{
         if(err){console.log(err); return;}
       });
