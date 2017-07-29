@@ -1,6 +1,7 @@
 import Queue from '../models/Queue';
 import Clinic from '../models/Clinic';
 import User from '../models/User';
+import Subscribe from '../models/Subscribe';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 
@@ -14,7 +15,7 @@ exports.getAllQueue = (data,cb) => {
 }
 
 exports.postQueue = (req, res) => {
-  // console.log("controller reached")
+  console.log("controller reached")
   cloudinary.uploader.upload(req.file.path, (result) => {
     let newQueue = new Queue({
       pic: result.secure_url || "",
@@ -22,12 +23,12 @@ exports.postQueue = (req, res) => {
       status: req.body.status || "",
       comment: req.body.comment || "",
       user: req.body.user_id || "",
-      clinic: req.body.clinic_id || "",
-      status: req.body.status || "",
+      clinic: req.body.clinic_id || ""
     });
 
-    // console.log(newQueue)
+    console.log(newQueue)
     newQueue.save((err) => {
+      console.log("saving function is reached")
       if(err){console.log(err); return;}
       res.json(newQueue);
     });
@@ -35,7 +36,8 @@ exports.postQueue = (req, res) => {
 
     Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
       // console.log(clinic)
-      clinic.queue.push(newQueue._id)
+      // ensure that latest queue is the first in the array
+      clinic.queue.unshift(newQueue._id)
       clinic.save((err)=>{
         if(err){console.log(err); return;}
       });

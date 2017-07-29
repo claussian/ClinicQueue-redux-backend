@@ -38,6 +38,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on('new subscribe to back end', (newSubscribe) => {
+    console.log("websocket reached")
+    console.log(newSubscribe)
     subscribeController.postNewSubscribe(newSubscribe, (subscribeSaved) => {
       socket.emit('subscription successful', subscribeSaved)
     })
