@@ -102,35 +102,37 @@ exports.postQueue = (req, res) => {
 
 //data is ?? possible suggestion ->
 // {
-//   queue_id,
-//   clinic_id,
-//   user_id
+//   queue_id: ......
+//   queuePicPublicId: ....
+//   clinic_id: ......
+//   user_id: .....
 // }
 /* Deleting photos in cloudinary
 function destroy(public_id, options, callback)
 cloudinary.v2.uploader.destroy('zombie', function(error, result){console.log(result)});
 */
 
-exports.deleteQueue = (data, cb) => {
-  Queue.findOneAndRemove({'_id': data}, (err,queue) => {
+exports.deleteQueue = (user, data, cb) => {
+  Queue.findOneAndRemove({'_id': data.queue_id}, (err,queue) => {
 
-    Clinic.findOneAndUpdate({'_id': queue.clinic}, {
-      '$pull':{'queue': queue._id}
+    Clinic.findOneAndUpdate({'_id': data.clinic_id}, {
+      '$pull':{'queue': data.queue._id}
     },(err, restraurant) => {
       if(err){console.log(err); return;}
     })
 
-    User.findOneAndUpdate({'_id': queue.user}, {
-      '$pull':{'queue': queue._id}
+    User.findOneAndUpdate({'_id': user._id}, {
+      '$pull':{'queue': data.queue._id}
     },(err, user) => {
       if(err){console.log(err); return;}
     })
 
-    cloudinary.uploader.destroy(queue.picPublicId, (err, result) => {
-      console.log(result);
+    cloudinary.uploader.destroy(data.queuePicPublicId, (err, result) => {
+      console.log('cloudinary in delete queue, error', err);
+      console.log('cloudinary in delete queue, result', result);
     })
 
     if(err){console.log(err); return;}
-    cb(queue)
+    cb(data)
   })
 }

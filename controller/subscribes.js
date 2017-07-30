@@ -34,3 +34,32 @@ exports.postNewSubscribe = (user, subscribeFromFrontEnd,cb) => {
       cb("Please login")
   }
 }
+
+/*
+possible suggestion of subscribeInfo
+{
+subscribe_id:
+user_id:
+clinic_id:
+}
+*/
+
+exports.deleteSubscribe = (user, data, cb) => {
+  console.log('delete subscribe Controller reached')
+  Subscribe.findOneAndRemove({'_id': data.subscribe_id}, (err, subscribe) => {
+
+    User.findOneAndUpdate({'_id': user._id}, {
+      '$pull': {'subscribe': data.subscribe_id }
+    }, (err,user) => {
+      if(err) {console.log(err); return;}
+    })
+
+    Clinic.findOneAndUpdate({'_id': data.clinic_id}, {
+      '$pull': {'subscribe': data.subscribe_id }
+    }, (err,clinic) => {
+      if(err) {console.log(err); return;}
+    })
+
+    cb(data)
+  })
+}

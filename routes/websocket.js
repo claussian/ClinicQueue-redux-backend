@@ -41,10 +41,25 @@ io.on('connection', (socket) => {
     console.log("websocket reached")
     console.log(newSubscribe)
     subscribeController.postNewSubscribe(socket.request.user, newSubscribe, (subscribeSaved) => {
-      socket.emit('subscription successful', subscribeSaved)
+      io.emit('subscription successful', subscribeSaved)
     })
   })
 
+  socket.on('delete queue to back end', (queueToBeDeleted) => {
+    console.log("web sockect for delete queue reached")
+    console.log(queueToBeDeleted)
+    queueController.deleteQueue(socket.request.user, queueToBeDeleted, (queueInfoToFrontEnd) => {
+      io.emit('delete queue done', queueInfoToFrontEnd)
+    })
+  })
+
+  socket.on('delete subscribe to back end', (subscribeInfo) => {
+    console.log('websocket for delete subscribe reached')
+    console.log(subscribeInfo)
+    subscribeController.deleteSubscribe(socket.request.user, subscribeInfo, (subscribeInfoToFrontEnd) => {
+      io.emit('delete subscribe done', subscribeInfoToFrontEnd)
+    })
+  })
 
 })
 }
