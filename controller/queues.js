@@ -16,67 +16,101 @@ exports.getAllQueue = (data,cb) => {
 
 exports.postQueue = (req, res) => {
   console.log("controller reached")
-  cloudinary.uploader.upload(req.file.path, (result) => {
-    let newQueue = new Queue({
-      pic: result.secure_url || "",
-      picPublicId: result.public_id || "",
-      status: req.body.status || "",
-      comment: req.body.comment || "",
-      user: req.body.user_id || "",
-      clinic: req.body.clinic_id || ""
-    });
+  if(req.user){
+    cloudinary.uploader.upload(req.file.path, (result) => {
+      let newQueue = new Queue({
+        pic: result.secure_url || "",
+        picPublicId: result.public_id || "",
+        comment: req.body.comment || "",
+        user: req.body.user_id || "",
+        clinic: req.body.clinic_id || ""
+      });
 
-    console.log(newQueue)
-    newQueue.save((err) => {
-      console.log("saving function is reached")
-      if(err){console.log(err); return;}
-      res.json(newQueue);
-    });
+      if((req.user.role === "clinicAdmin" || "appAdmin") && req.body.clinic_id===req.user.myClinic){
+        // if(req.body.status!==""){
+          newQueue.status = req.body.status;
+        // }else{
+        //   res.json("Please provide queue status").then(
+        //     fs.unlink(req.file.path, (err) => {
+        //       if (err) {
+        //             console.log("failed to delete local image:"+err);
+        //         } else {
+        //             console.log('successfully deleted local image');
+        //         }
+        //     })
+        //   );
+        // }
+      }
 
-
+<<<<<<< Updated upstream
     Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
       // console.log(clinic)
       // ensure that latest queue is the first in the array
       clinic.queue.unshift(newQueue._id)
       clinic.save((err)=>{
+=======
+      newQueue.save((err) => {
+        console.log("saving function is reached")
+>>>>>>> Stashed changes
         if(err){console.log(err); return;}
+        res.json(newQueue);
       });
 
-      if(req.body.status!==""){
-        Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
 
-          subscribes.forEach((subscribe,index) => {
-            console.log('twillo will send to user contact: '+ subscribe.user.contact);
-            console.log('for clinic: ' + clinic.properties.name_full);
-            console.log('sending clinic status' + req.body.status);
-            /*
-            * To put twillo codes in here
-            */
+      Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
+        // console.log(clinic)
+        clinic.queue.push(newQueue._id)
+        clinic.save((err)=>{
+          if(err){console.log(err); return;}
+        });
+
+        if(req.body.status!=="" && (req.user.role==="clinicAdmin" || "appAdmin")){
+          Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
+
+            subscribes.forEach((subscribe,index) => {
+              console.log('twillo will send to user contact: '+ subscribe.user.contact);
+              console.log('for clinic: ' + clinic.properties.name_full);
+              console.log('sending clinic status' + req.body.status);
+              /*
+              * To put twillo codes in here
+              */
+            })
+
           })
-
-        })
-      }
-
-    })
-
-    User.findOne({"_id": req.body.user_id}, (err,user) => {
-      user.queue.push(newQueue._id)
-      user.save((err)=>{
-        if(err){console.log(err); return;}
-      });
-    })
-
-
-  })
-  .then(
-    fs.unlink(req.file.path, (err) => {
-      if (err) {
-            console.log("failed to delete local image:"+err);
-        } else {
-            console.log('successfully deleted local image');
         }
+
+      })
+
+      User.findOne({"_id": req.body.user_id}, (err,user) => {
+        user.queue.push(newQueue._id)
+        user.save((err)=>{
+          if(err){console.log(err); return;}
+        });
+      })
+
+
     })
-  );
+    .then(
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+              console.log("failed to delete local image:"+err);
+          } else {
+              console.log('successfully deleted local image');
+          }
+      })
+    );
+  }else{
+    res.json("Please Login").then(
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+              console.log("failed to delete local image:"+err);
+          } else {
+              console.log('successfully deleted local image');
+          }
+      })
+    );
+  }
+
 }
 
 //data is ?? possible suggestion ->
