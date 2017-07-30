@@ -7,10 +7,14 @@ const router = express.Router();
 
 /* Verify user credentials */
 router.get('/user', (req, res, next) => {
-  User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
-  if(err){console.log(err); return;}
-  res.json(user);
-})
+  if(!req.user){
+    res.json(req.user);
+  }else{
+    User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
+      if(err){console.log(err); return;}
+      res.json(user);
+    })
+  }
 });
 
 /* Signup new user */
@@ -33,6 +37,7 @@ router.post('/signup', function(req, res, next) {
       user.password = req.body.password;
       user.contact = req.body.contact;
       user.role = req.body.role || "";
+      //if(user.myClinic)
       user.myClinic = req.body.myClinic || "";
       console.log(user);
       user.save((err) => {
