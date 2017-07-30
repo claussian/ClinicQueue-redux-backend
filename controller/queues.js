@@ -42,27 +42,14 @@ exports.postQueue = (req, res) => {
         // }
       }
 
-<<<<<<< Updated upstream
     Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
       // console.log(clinic)
       // ensure that latest queue is the first in the array
       clinic.queue.unshift(newQueue._id)
       clinic.save((err)=>{
-=======
-      newQueue.save((err) => {
-        console.log("saving function is reached")
->>>>>>> Stashed changes
         if(err){console.log(err); return;}
         res.json(newQueue);
       });
-
-
-      Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
-        // console.log(clinic)
-        clinic.queue.push(newQueue._id)
-        clinic.save((err)=>{
-          if(err){console.log(err); return;}
-        });
 
         if(req.body.status!=="" && (req.user.role==="clinicAdmin" || "appAdmin")){
           Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
