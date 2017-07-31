@@ -18,17 +18,16 @@ io.on('connection', (socket) => {
   // Listen in to socket event 'getAllQueues' within io connection and execute an anonymous function
   // Anonymous function accepts data emitted from frontend as argument and executes controller
   // Controller accepts two arguments: callback and data
-  socket.on('getAllQueues', (data) => {
-    console.log('data', data)
-  //   queueController.getAllQueue(data, (queues) => {
-  //     io.emit('allQueues', queues);
-  //   }
-  // );
+  socket.on('get all queue on app initialise', () => {
+    // console.log('data', data)
+    queueController.getAllQueue((queues) => {
+      socket.emit('get all queue from backend', queues);
+    });
   });
 
   socket.on('getAllClinic', () => {
     clinicController.getAllClinic((clinic)=> {
-      io.emit('allClinic', clinic);
+      socket.emit('allClinic', clinic);
     })
   })
 
