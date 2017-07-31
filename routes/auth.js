@@ -11,7 +11,7 @@ router.get('/user', (req, res, next) => {
   if(!req.user){
     res.json(req.user);
   }else{
-    User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
+    User.findOne({'_id': req.user._id}).populate('queue').populate('subscribe').exec((err,user) => {
       if(err){console.log(err); return;}
         res.json(user);
     })
