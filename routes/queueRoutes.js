@@ -8,6 +8,9 @@ const upload = multer({ dest: './uploads' });
 const router = express.Router();
 
 router.get('/', queueController.getAllQueue);
+
+router.get('/:id', queueController.getQueue);
+
 // router.post('/:clinic_id', upload.single('pic'), queueController.postQueue);
 router.delete('/:queue_id', queueController.deleteQueue);
 
