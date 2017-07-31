@@ -86,6 +86,77 @@ router.get('/logout',(req, res, next) => {
   res.json({'message': 'User logged out'});
 });
 
+/* update user profile information */
+router.post('/account/profile', (req, res, next) => {
+  let updateUsername = req.body.username;
+  let updateEmail = req.body.email;
+  let updatePassword = req.body.password;
+  let updateContact = req.body.contact;
+  let updateRole = req.body.role || "";
+    //if(user.myClinic)
+  let updateMyClinic = req.body.myClinic || "";
+  let updateId = req.body.id;
+
+  console.log("username: ", updateUsername);
+  console.log("email: ", updateEmail);
+  console.log("contact: ", updateContact);
+  console.log("Password: ", updatePassword);
+  console.log("myClinic: ", updateMyClinic);
+  console.log("role: ", updateRole);
+  console.log("id: ", updateId)
+
+  User.findById(updateId, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    user.email = req.body.email || '';
+    user.contact = req.body.contact || '';
+    user.role = req.body.role || '';
+    user.myClinic = req.body.myClinic || '';
+    user.save((err) => {
+      if(err) {
+        return next(err);
+      }
+      console.log('saved');
+      res.send('saved');
+    });
+  });
+});
+
+/* update user password */
+router.post('/account/password',(req, res, next) => {
+  let newPassword = req.body.password;
+
+  User.findById(req.user._id, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    user.password = req.body.password;
+    user.save((err) => {
+      if(err) {
+        return next(err);
+      }
+      console.log('updated password');
+      res.send('update password');
+    });
+  });
+});
+
+/* account delete */
+router.delete('/:id', (req, res, next) => {
+  User.findOneAndRemove({_id: req.params.id},(err,user) =>{
+    if(err) {
+      return next(err);
+    }
+    //req.logout();
+    console.log('Your account has been deleted.');
+    res.json({'message': "User deleted!"});
+    // user.subscribe.forEach( (subscribe, index) => {
+    //
+    // })
+  });
+});
+
 /*  clear shared books */
 // router.delete('/user/clearBooks', userController.removeUserSharedBooks);
 
