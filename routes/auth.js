@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import User from '../models/User';
+import Queue from '../models/Queue';
 import userController from '../controller/users';
 
 const router = express.Router();
@@ -12,7 +13,7 @@ router.get('/user', (req, res, next) => {
   }else{
     User.findOne({'_id': req.user._id}).populate('queue').exec((err,user) => {
       if(err){console.log(err); return;}
-      res.json(user);
+        res.json(user);
     })
   }
 });

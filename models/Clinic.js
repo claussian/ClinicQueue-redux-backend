@@ -36,7 +36,7 @@ const clinicSchema = new mongoose.Schema({
       differenceQueue: String
   },
   queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
-  subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
+  subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 },{
     timestamps: true
   });
