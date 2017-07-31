@@ -18,14 +18,14 @@ exports.postNewSubscribe = (user, subscribeFromFrontEnd,cb) => {
     })
 
     User.findOne({'_id': subscribeFromFrontEnd.user._id}, (err, user) => {
-      user.subscribe.push(subscribeFromFrontEnd.clinic._id);
+      user.subscribe.push(newSubscribe._id);
       user.save((err) => {
         if(err) {console.log(err); return;}
       })
     })
 
     Clinic.findOne({'_id': subscribeFromFrontEnd.clinic._id}, (err, clinic) => {
-      clinic.subscribe.push(subscribeFromFrontEnd.user._id);
+      clinic.subscribe.push(newSubscribe._id);
       clinic.save((err) => {
         if(err) {console.log(err); return;}
       })
@@ -48,7 +48,7 @@ exports.deleteSubscribe = (user, data, cb) => {
   console.log('delete subscribe Controller reached')
   Subscribe.findOneAndRemove({'_id': data.subscribe_id}, (err, subscribe) => {
 
-    User.findOneAndUpdate({'_id': user._id}, {
+    User.findOneAndUpdate({'_id': data.user_id}, {
       '$pull': {'subscribe': data.subscribe_id }
     }, (err,user) => {
       if(err) {console.log(err); return;}

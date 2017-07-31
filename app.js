@@ -16,6 +16,8 @@ import passportSocketIo from "passport.socketio";
 // Configure .env path
 dotenv.load({path: '.env'});
 
+export const twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+
 // configure cloudinary
 cloudinary.config({
   cloud_name: "dxmdjcspm",
