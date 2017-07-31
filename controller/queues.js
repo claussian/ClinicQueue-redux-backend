@@ -8,9 +8,17 @@ import fs from 'fs';
 
 // Controller accepts callback 'cb' as an argument
 // Cb will only exceute on completion of async database operation 'Queue.find()'
-exports.getAllQueue = (data,cb) => {
-  Queue.find({}, (err, queues) => {
-      cb(queues);
+exports.getAllQueue = (cb) => {
+  Queue.find({}).populate('clinic').populate('user').exec( (err, queues) => {
+    queues.forEach((queue,index,array) => {
+      let newUser = {}
+      newUser._id = queue.user._id;
+      newUser.role = queue.user.role;
+      newUser.myClinic = queue.user.myClinic;
+      queue.user = newUser;
+      array[index] = queue;
+    })
+    cb(queues);
   })
 }
 
