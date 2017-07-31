@@ -14,6 +14,19 @@ exports.getAllQueue = (data,cb) => {
   })
 }
 
+exports.getQueue = (req, res) => {
+  console.log("got request getQueue");
+
+  const id = req.params.id;
+  Queue.findById(id)
+    .populate('user')
+    .populate('clinic')
+    .exec((err, queue) => {
+      if (err) return res.status(404).send('Not found');
+      res.json(queue);
+    });
+}
+
 exports.postQueue = (req, res) => {
   console.log("controller reached")
   if(req.user){
@@ -43,10 +56,12 @@ exports.postQueue = (req, res) => {
       }
 
     Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
-      // console.log(clinic)
+      console.log("clinic findone reached");
       // ensure that latest queue is the first in the array
       clinic.queue.unshift(newQueue._id)
+      console.log(clinic);
       clinic.save((err)=>{
+        console.log("saving updated clinic with newqueue");
         if(err){console.log(err); return;}
         res.json(newQueue);
       });
