@@ -13,6 +13,7 @@ exports.getAllQueue = (cb) => {
     queues.forEach((queue,index,array) => {
       let newUser = {}
       newUser._id = queue.user._id;
+      newUser.username = queue.user.username;
       newUser.role = queue.user.role;
       newUser.myClinic = queue.user.myClinic;
       queue.user = newUser;
@@ -71,7 +72,7 @@ exports.postQueue = (req, res) => {
       clinic.save((err)=>{
         console.log("saving updated clinic with newqueue");
         if(err){console.log(err); return;}
-        res.json(newQueue);
+        //res.json(newQueue);
       });
 
         if(req.body.status!=="" && (req.user.role==="clinicAdmin" || "appAdmin")){
@@ -97,6 +98,11 @@ exports.postQueue = (req, res) => {
           if(err){console.log(err); return;}
         });
       })
+
+      newQueue.save((err) => {
+        if(err){console.log(err); return;}
+        res.json(newQueue);
+      });
 
 
     })
