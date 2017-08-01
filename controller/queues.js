@@ -4,6 +4,8 @@ import User from '../models/User';
 import Subscribe from '../models/Subscribe';
 import cloudinary from 'cloudinary';
 import fs from 'fs';
+import {twilio} from '../app';
+// const twilio = require('twilio')('ACf93f0fb06fa820f82a9ff4eed14241ae', '9bdc31cb5da59c05f2d629892e06bfdd');
 
 
 // Controller accepts callback 'cb' as an argument
@@ -13,6 +15,7 @@ exports.getAllQueue = (cb) => {
     queues.forEach((queue,index,array) => {
       let newUser = {}
       newUser._id = queue.user._id;
+      newUser.username = queue.user.username;
       newUser.role = queue.user.role;
       newUser.myClinic = queue.user.myClinic;
       queue.user = newUser;
@@ -50,45 +53,43 @@ exports.postQueue = (req, res) => {
       if((req.user.role === "clinicAdmin" || "appAdmin") && req.body.clinic_id===req.user.myClinic){
         // if(req.body.status!==""){
           newQueue.status = req.body.status;
-        // }else{
-        //   res.json("Please provide queue status").then(
-        //     fs.unlink(req.file.path, (err) => {
-        //       if (err) {
-        //             console.log("failed to delete local image:"+err);
-        //         } else {
-        //             console.log('successfully deleted local image');
-        //         }
-        //     })
-        //   );
-        // }
       }
 
-    Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
-      console.log("clinic findone reached");
-      // ensure that latest queue is the first in the array
-      clinic.queue.unshift(newQueue._id)
-      console.log(clinic);
-      clinic.save((err)=>{
-        console.log("saving updated clinic with newqueue");
-        if(err){console.log(err); return;}
-        res.json(newQueue);
-      });
+      if(req.body.status!=="" && (req.user.role==="clinicAdmin" || "appAdmin")){
+        Subscribe.find({'clinic':req.body.clinic_id}).populate('user').populate('clinic').exec((err,subscribes) => {
 
-        if(req.body.status!=="" && (req.user.role==="clinicAdmin" || "appAdmin")){
-          Subscribe.find({'clinic':req.body.clinic_id}).populate('user').exec((err,subscribes) => {
-
-            subscribes.forEach((subscribe,index) => {
-              console.log('twillo will send to user contact: '+ subscribe.user.contact);
-              console.log('for clinic: ' + clinic.properties.name_full);
-              console.log('sending clinic status' + req.body.status);
-              /*
-              * To put twillo codes in here
-              */
-            })
+          subscribes.forEach((subscribe,index) => {
+            console.log('twillo will send to user contact: '+ subscribe.user.contact);
+            console.log('for clinic: ' + subscribe.clinic.properties.name_full);
+            console.log('sending clinic status' + req.body.status);
+            /*
+            * To put twillo codes in here
+            */
+            if(subscribe.user.contact.length >7){
+              twilio.messages.create({
+                  to: '+65'+ subscribe.user.contact,
+                  from: '+18304200023',
+                  body: '[Updates] '+ subscribe.clinic.properties.name_full + ' have posted a new Queue status: ' + req.body.status
+              }, (err,message) => {
+                if(err) {console.log(err); return;}
+                console.log(message.sid);
+              })
+            }
 
           })
-        }
 
+        })
+      }
+
+      Clinic.findOne({"_id": req.body.clinic_id}, (err,clinic) => {
+        console.log("clinic findone reached");
+        // ensure that latest queue is the first in the array
+        clinic.queue.unshift(newQueue._id)
+        console.log(clinic);
+        clinic.save((err)=>{
+          console.log("saving updated clinic with newqueue");
+          if(err){console.log(err); return;}
+        });
       })
 
       User.findOne({"_id": req.body.user_id}, (err,user) => {
@@ -97,6 +98,11 @@ exports.postQueue = (req, res) => {
           if(err){console.log(err); return;}
         });
       })
+
+      newQueue.save((err) => {
+        if(err){console.log(err); return;}
+        res.json(newQueue);
+      });
 
 
     })
@@ -136,16 +142,19 @@ cloudinary.v2.uploader.destroy('zombie', function(error, result){console.log(res
 */
 
 exports.deleteQueue = (user, data, cb) => {
+  // console.log(user)
+  // console.log(data)
+
   Queue.findOneAndRemove({'_id': data.queue_id}, (err,queue) => {
 
     Clinic.findOneAndUpdate({'_id': data.clinic_id}, {
-      '$pull':{'queue': data.queue._id}
+      '$pull':{'queue': data.queue_id}
     },(err, restraurant) => {
       if(err){console.log(err); return;}
     })
 
-    User.findOneAndUpdate({'_id': user._id}, {
-      '$pull':{'queue': data.queue._id}
+    User.findOneAndUpdate({'_id': data.user_id}, {
+      '$pull':{'queue': data.queue_id}
     },(err, user) => {
       if(err){console.log(err); return;}
     })
