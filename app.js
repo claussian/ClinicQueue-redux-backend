@@ -16,19 +16,14 @@ import passportSocketIo from "passport.socketio";
 // Configure .env path
 dotenv.load({path: '.env'});
 
+export const twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+
 // configure cloudinary
 cloudinary.config({
-  cloud_name: "dxmdjcspm",
-  api_key: 326963819454321,
-  api_secret: "7A0-lZzv7kBuQnpBrs5vlnKAk7s"
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
 });
-
-// // configure cloudinary
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_NAME,
-//   api_key: process.env.CLOUDINARY_KEY,
-//   api_secret: process.env.CLOUDINARY_SECRET
-// });
 
 
 // import favicon from 'serve-favicon';
