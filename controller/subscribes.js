@@ -6,11 +6,11 @@ exports.postNewSubscribe = (user, subscribeFromFrontEnd,cb) => {
   console.log("subscribe controller reached")
   console.log(subscribeFromFrontEnd)
   console.log(user)
-  if(user._id){
+  //if(user._id){
     const newSubscribe = new Subscribe({
       user: subscribeFromFrontEnd.user._id,
       clinic: subscribeFromFrontEnd.clinic._id
-    })
+    });
 
     newSubscribe.save((err) => {
       if(err) {console.log(err); return;}
@@ -30,10 +30,7 @@ exports.postNewSubscribe = (user, subscribeFromFrontEnd,cb) => {
         if(err) {console.log(err); return;}
       })
     })
-  }else{
-      cb("Please login")
   }
-}
 
 /*
 possible suggestion of subscribeInfo
