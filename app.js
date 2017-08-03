@@ -1,9 +1,9 @@
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import Debug from 'debug';
+//import Debug from 'debug';
 import express from 'express';
-import logger from 'morgan';
+//import logger from 'morgan';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -11,7 +11,7 @@ import multer from 'multer';
 const upload = multer({ dest: './uploads/' });
 import cloudinary from 'cloudinary';
 import passportSocketIo from "passport.socketio";
-
+import fs from 'fs';
 
 // Configure .env path
 dotenv.load({path: '.env'});
@@ -36,6 +36,14 @@ import auth from './routes/auth';
 import index from './routes/index';
 import queueRoutes from './routes/queueRoutes';
 
+const key = fs.readFileSync('./clinicqueues-key.pem')
+const cert = fs.readFileSync('./clinicqueues-cert.pem')
+
+const option = {
+	key: key,
+	cert: cert
+}
+
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.REMOTEDB_URI);
 mongoose.connection.on('error', (err) => {
@@ -45,15 +53,15 @@ mongoose.connection.on('error', (err) => {
 });
 const app = express();
 // Port setup
-app.set('port', process.env.PORT || 443);
+app.set('port', process.env.PORT || 3001);
 
 
 /* Sockect.io initialize
 **/
-const server = require('http').Server(app);
+const server = require('https').Server(option, app);
 const io = require('socket.io')(server);
 
-const debug = Debug('clinic-queue-redux-backend:app');
+//const debug = Debug('clinic-queue-redux-backend:app');
 
 /**
  * API keys and Passport configuration.
@@ -66,7 +74,7 @@ app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -152,7 +160,8 @@ app.use((err, req, res, next) => {
 
 // Handle uncaughtException
 process.on('uncaughtException', (err) => {
-  debug('Caught exception: %j', err);
+  //debug('Caught exception: %j', err);
+  console.log(err);
   process.exit(1);
 });
 
