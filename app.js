@@ -45,7 +45,7 @@ mongoose.connection.on('error', (err) => {
 });
 const app = express();
 // Port setup
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || 443);
 
 
 /* Sockect.io initialize
