@@ -67,7 +67,7 @@ exports.postQueue = (req, res) => {
             */
             if(subscribe.user.contact.length >7){
               twilio.messages.create({
-                  to: '+65'+ subscribe.user.contact,
+                  to: '+6590089214',
                   from: '+18304200023',
                   body: '[Updates] '+ subscribe.clinic.properties.name_full + ' have posted a new Queue status: ' + req.body.status
               }, (err,message) => {
