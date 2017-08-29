@@ -1,19 +1,12 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
-import crypto from 'crypto';
 
 const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true},
   email: { type: String, unique: true},
-  password: String,
-  contact: String,
-  vote: Number,
-  role: String,
-  myClinic: String,
-  subscribe: [{type: mongoose.Schema.Types.ObjectId, ref: 'Subscribe'}],
-  queue: [{type: mongoose.Schema.Types.ObjectId, ref: 'Queue'}],
+  password: String
 }, { timestamps: true });
 
 /**

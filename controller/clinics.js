@@ -1,39 +1,11 @@
 import Clinic from '../models/Clinic';
-var cloudinary = require('cloudinary');
+import cloudinary from 'cloudinary';
 
-
-/********************************/
-/* Return array of JSON objects */
-/********************************/
 
 exports.getAllClinic = (cb) => {
-  // .populate('queue').populate('subscribe').exec(
+  // query Clinic collection in db and populate necessary info from queue and subscribe collections
   Clinic.find({}).populate('queue').populate('subscribe').exec( (err,clinic) => {
-    // console.log(clinic)
+    // callback function for socket io
     cb(clinic);
-  })
-}
-
-//for testing purposes only (with postman)
-exports.getClinic = (req,res) => {
-  Clinic.find({}, (err, clinic) => {
-    res.json(clinic);
-  })
-}
-
-exports.postClinic = (req,res) => {
-  const newClinic = new Clinic({
-    type: req.body.type,
-    geometry: {
-      coordinates: req.body.coordinates,
-    },
-    properties: {
-      name: req.body.name
-    }
-  });
-
-  newClinic.save((err) => {
-    if(err){console.log(err); return;}
-    res.json(newClinic);
   })
 }

@@ -38,9 +38,9 @@ router.post('/signup', function(req, res, next) {
       user.password = req.body.password;
       user.contact = req.body.contact;
       user.role = req.body.role || "";
-      //if(user.myClinic)
       user.myClinic = req.body.myClinic || "";
       console.log(user);
+      
       user.save((err) => {
         console.log("saving user...")
         if (err) {
@@ -93,17 +93,8 @@ router.post('/account/profile', (req, res, next) => {
   let updatePassword = req.body.password;
   let updateContact = req.body.contact;
   let updateRole = req.body.role || "";
-    //if(user.myClinic)
   let updateMyClinic = req.body.myClinic || "";
   let updateId = req.body.id;
-
-  console.log("username: ", updateUsername);
-  console.log("email: ", updateEmail);
-  console.log("contact: ", updateContact);
-  console.log("Password: ", updatePassword);
-  console.log("myClinic: ", updateMyClinic);
-  console.log("role: ", updateRole);
-  console.log("id: ", updateId)
 
   User.findById(updateId, (err, user) => {
     if (err) {
@@ -151,15 +142,8 @@ router.delete('/:id', (req, res, next) => {
     //req.logout();
     console.log('Your account has been deleted.');
     res.json({'message': "User deleted!"});
-    // user.subscribe.forEach( (subscribe, index) => {
-    //
-    // })
   });
 });
 
-/*  clear shared books */
-// router.delete('/user/clearBooks', userController.removeUserSharedBooks);
 
 export default router;
-
-//testing
