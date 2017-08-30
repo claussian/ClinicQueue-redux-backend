@@ -113,7 +113,14 @@ exports.postQueue = (req, res) => {
       })
     );
   }else{
-    res.json("Please Login")
+    res.json("Please Login");
+    fs.unlink(req.file.path, (err) => {
+      if (err) {
+            console.log("failed to delete local image:"+err);
+        } else {
+            console.log('successfully deleted local image');
+        }
+    })
   }
 
 }
