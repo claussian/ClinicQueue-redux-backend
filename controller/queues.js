@@ -40,7 +40,12 @@ exports.postQueue = (req, res) => {
 
   // only allow user to post if logged in
   if(req.user){
-    cloudinary.uploader.upload(req.file.path, (result) => {
+    cloudinary.uploader.upload(req.file.path, (err, result) => {
+      if(err){
+        console.log(err);
+        res.json({error: "error in saving pic"});
+        return;
+      }
       let newQueue = new Queue({
         pic: result.secure_url || "",
         picPublicId: result.public_id || "",
